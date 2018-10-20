@@ -44,6 +44,18 @@ services:
     depends_on:
       - elasticsearch
 
+  logsprout:
+    image: gliderlabs/logspout
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    entrypoint:
+      - '/bin/logspout'
+      - 'syslog+tcp://logstash:5000'
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
 networks:
 
   elk:
