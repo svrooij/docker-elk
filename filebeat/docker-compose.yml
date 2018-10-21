@@ -1,7 +1,6 @@
 version: "3.5"
 services:
   filebeat:
-    hostname: filebeat
 # ** Here to build the image, you need to specify your own docker hub account :
     build:
       context: .
@@ -23,4 +22,3 @@ services:
 volumes:
 # create a persistent volume for Filebeat
   filebeat_data:
-

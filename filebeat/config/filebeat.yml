@@ -8,15 +8,35 @@ filebeat.inputs:
     stream: all
     ids:
       - "*"
-    json:
-      keys_under_root: true
-      message_key: log
-      add_error_key: true
-      ignore_decoding_error: true
-    exclude_files: ['\.gz$']
-    ignore_older: "7d"
-    close_inactive: "1m"
-    tags: ['json','docker']
+  json:
+    keys_under_root: true
+    message_key: log
+    add_error_key: true
+    ignore_decoding_error: true
+  encoding: "utf-8"
+  exclude_files: ['\.gz$']
+  ignore_older: "1m"
+  close_inactive: "1m"
+  tags: ['json','docker']
+  processors:
+  - add_docker_metadata: ~
+processors:
+  - drop_fields:
+      when:
+        has_fields: ['host']
+      fields: ['host']
+  - drop_fields:
+      when:
+        has_fields: ['stream']
+      fields: ['stream']
+  - drop_fields:
+      when:
+        has_fields: ['source']
+      fields: ['source']
+  - drop_fields:
+      when:
+        has_fields: ['@t']
+      fields: ['@t']
 
 # filebeat.config.modules:
 #   path: ${path.config}/modules.d/*.yml
@@ -36,8 +56,8 @@ filebeat.inputs:
 #   path: "/kibana"
 
 output.logstash:
-# if your elasticsearch is local you can change it to 127.0.0.1:9200
-  hosts: ["127.0.0.1:9200"]
+# output to logstash beats input, you'll have to setup this IP in case you want to ship to an other server.
+  hosts: ["logstash:5044"]
   # template:
   #   name: "filebeat"
   #   path: "fields.yml"

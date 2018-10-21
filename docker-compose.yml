@@ -13,6 +13,9 @@ services:
       - "127.0.0.1:9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+# needed to persist all elasticsearch data :
+     - "elastic_data:/usr/share/elasticsearch/data:rw"    
     networks:
       - elk
 
@@ -23,6 +26,7 @@ services:
         ELK_VERSION: $ELK_VERSION
     ports:
       - "5000:5000"
+      - "5044:5044"
       - "127.0.0.1:9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
@@ -42,20 +46,28 @@ services:
       - elk
     depends_on:
       - elasticsearch
+  
+#   filebeat:
+#     build:
+#       context: filebeat/
+#       args:
+#         ELK_VERSION: $ELK_VERSION
+#     depends_on:
+#       - logststash
+#     volumes:
+# # needed to persist filebeat tracking data :
+#      - "filebeat_data:/usr/share/filebeat/data:rw"
+# # needed to access all docker logs (read only) :
+#      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+# # needed to access additional informations about containers
+#      - "/var/run/docker.sock:/var/run/docker.sock"
 
-  # logsprout:
-  #   image: gliderlabs/logspout
-  #   volumes:
-  #     - '/var/run/docker.sock:/var/run/docker.sock'
-  #   entrypoint:
-  #     - '/bin/logspout'
-  #     - 'syslog+tcp://vps02.smartersoft.nl:5000'
-  #   networks:
-  #     - elk
-  #   depends_on:
-  #     - logstash
+
+volumes:
+# create a persistent volume for Filebeat
+  # filebeat_data:
+  elastic_data:
 
 networks:
-
   elk:
     driver: bridge
