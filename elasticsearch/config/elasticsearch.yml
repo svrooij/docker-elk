@@ -9,8 +9,11 @@ network.host: 0.0.0.0
 # set to 1 to allow single node clusters
 # Details: https://github.com/elastic/elasticsearch/pull/17288
 discovery.zen.minimum_master_nodes: 1
+discovery.zen.ping.unicast.hosts:
+  - elasticsearch
+  - elasticsearch2
 
 ## Use single node discovery in order to disable production mode and avoid bootstrap checks
 ## see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
 #
-discovery.type: single-node
+#discovery.type: single-node
